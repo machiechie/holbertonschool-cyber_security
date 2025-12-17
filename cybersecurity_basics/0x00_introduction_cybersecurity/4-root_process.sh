@@ -1,2 +1,2 @@
 #!/bin/bash
-ps -aux -f | grep -v "0      0"
+ps -aux | grep -v "0      0"
