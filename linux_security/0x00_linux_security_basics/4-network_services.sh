@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo sytemctl list-units --type=service
+sudo netstat -p -n -l -t -u
