@@ -1,2 +1,2 @@
 #!/bin/bash
-subfinder -d $1 -silent -o $1.txt -ip -oJ | awk -F'[:,]' '{print $2","$4}' | sed 's/"//g'
+subfinder -silent -d $1 -o $1.txt -nW -oI
