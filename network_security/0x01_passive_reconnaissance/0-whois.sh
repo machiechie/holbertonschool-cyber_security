@@ -1,2 +1,2 @@
 #!/bin/bash
-whois $1 | awk -F': +' 'BEGIN{split("Registrant,Admin,Tech",g,",");split("Name,Organization,Street,City,State/Province,Postal Code,Country,Phone,Phone Ext:,Fax,Fax Ext:,Email",s,",")} {k=$1;sub(/^Registry /,"",k);sub(/[ \t]+$/,"",k);if(!(k in d))d[k]=$2} END{for(i=1;i<=3;i++)for(j=1;j<=12;j++){f=g[i]" "s[j];v=d[f];sub(/[ \t]+$/,"",v);if(s[j]~/Ext:/)v="";printf "%s, %s%s",f,v,(i==3&&j==12?"":"\n")}}' > $1.csv
+sudo whois $1 | awk 'BEGIN { FS=": "; OFS="," } /^(Registrant|Admin|Tech)/ {print $1, $2}' > $1.csv
