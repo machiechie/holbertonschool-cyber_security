@@ -1,1 +1,1 @@
-ip.proto == 1 and icmp.type == 8
+ip.proto == 1 or icmp.type == 8
