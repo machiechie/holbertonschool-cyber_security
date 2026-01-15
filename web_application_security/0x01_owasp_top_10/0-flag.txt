@@ -1,0 +1,5 @@
+The application uses predictable session identifiers.
+The session cookie contains static parts, a sequential counter, and a timestamp.
+Because the session ID is not random, an attacker can predict valid session values
+and hijack another user's session.
+This results in Broken Access Control (OWASP A1:2021).
