@@ -1,57 +1,59 @@
 #!/usr/bin/python3
 """
-Locates and replaces a string in the heap of a running process.
-Usage: ./read_write_heap.py pid search_string replace_string
+Write a script that finds a string in the heap of a running process,
+and replaces it.
 """
-
 import sys
 
+
 def read_write_heap():
-    """Main function to perform memory manipulation."""
+    """
+    Finds and replaces a string in the heap of a running process.
+    """
     if len(sys.argv) != 4:
+        print("Usage: read_write_heap.py pid search_string replace_string")
         sys.exit(1)
 
     pid = sys.argv[1]
-    search_str = sys.argv[2]
-    replace_str = sys.argv[3]
-
-    maps_path = "/proc/{}/maps".format(pid)
-    mem_path = "/proc/{}/mem".format(pid)
-
-    heap_start = None
-    heap_end = None
+    search_string = sys.argv[2]
+    replace_string = sys.argv[3]
 
     try:
-        with open(maps_path, 'r') as f:
-            for line in f:
+        # 1. Read the maps file to find the heap location
+        with open(f"/proc/{pid}/maps", "r") as maps_file:
+            heap_info = None
+            for line in maps_file:
                 if "[heap]" in line:
-                    parts = line.split()
-                    addr_range = parts[0].split('-')
-                    heap_start = int(addr_range[0], 16)
-                    heap_end = int(addr_range[1], 16)
+                    heap_info = line
                     break
-        
-        if not heap_start or not heap_end:
-            sys.exit(1)
 
-        with open(mem_path, 'rb+') as f:
-            f.seek(heap_start)
-            heap_data = f.read(heap_end - heap_start)
-
-            # Find the string in the raw byte data
-            try:
-                offset = heap_data.index(bytes(search_str, "ascii"))
-            except ValueError:
+            if not heap_info:
+                print(f"[ERROR] Heap not found for PID {pid}")
                 sys.exit(1)
 
-            # Overwrite the memory
-            f.seek(heap_start + offset)
-            f.write(bytes(replace_str, "ascii"))
-            
-            # If the script reaches here successfully:
-            print("SUCCESS!", end="") # Matching desired stdout format
+            parts = heap_info.split()
+            addr_range = parts[0].split("-")
+            start_addr = int(addr_range[0], 16)
+            end_addr = int(addr_range[1], 16)
 
-    except Exception:
+        # 2. Open the mem file and perform the replacement
+        with open(f"/proc/{pid}/mem", "rb+") as mem_file:
+            mem_file.seek(start_addr)
+            heap = mem_file.read(end_addr - start_addr)
+
+            try:
+                offset = heap.index(bytes(search_string, "ascii"))
+            except ValueError:
+                print(f"[ERROR] String '{search_string}' not found")
+                sys.exit(1)
+
+            # Execution of the writing process
+            mem_file.seek(start_addr + offset)
+            # Writing the replacement string with a null terminator
+            mem_file.write(bytes(replace_string + '\0', "ascii"))
+
+    except Exception as e:
+        print(f"[ERROR] {e}")
         sys.exit(1)
 
 
