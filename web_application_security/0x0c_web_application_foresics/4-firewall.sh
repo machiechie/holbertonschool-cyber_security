@@ -1,2 +1,2 @@
 #!/bin/bash
-grep "COMMAND=" auth.log | grep -E "iptables|firewall-cmd" | wc -l
+grep "COMMAND=" auth.log | grep -E "\-A|\-I|\-\-add" | wc -l
