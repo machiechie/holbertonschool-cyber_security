@@ -1,2 +1,2 @@
 #!/bin/bash
-grep "COMMAND=" auth.log | grep -E "\-A|\-I|\-\-add" | wc -l
+grep -E 'iptables.*INPUT' auth.log | wc -l
