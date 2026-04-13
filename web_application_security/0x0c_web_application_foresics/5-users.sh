@@ -1,2 +1,2 @@
 #!/bin/bash
-grep "new user" auth.log | awk -F'[,=]' '{print $2}' | sort -u | tr '\n' ',' | sed 's/,$//'
+grep 'useradd' auth.log | awk -F 'name=' '{print $2}' | awk '{print $1}' | tr -d ',' | sort -u | paste -sd ',' -
